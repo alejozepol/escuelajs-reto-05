@@ -1,15 +1,13 @@
 const $app = document.getElementById('app');
 const $observe = document.getElementById('observe');
 const API = 'https://rickandmortyapi.com/api/character/';
-var next = ''
-var prev = ''
 var contador = 0
+
 const getData = api => {
   fetch(api)
     .then(response => response.json())
     .then(response => {
-      next = response.info.next
-      prev =  response.info.prev
+     localStorage.setItem('next_fetch',response.info.next) 
       const characters = response.results;
       let output = characters.map(character => {
         return `
@@ -28,13 +26,16 @@ const getData = api => {
 }
 
 const loadData = () => {
+ const next_fetch = localStorage.getItem("next_fetch")
+
+
   if ( contador < 1) {
     getData(API);
     console.log('if ' + contador)
     contador +=1;
 
-  } else if(next !== '') {
-    getData(next);
+  } else if(next_fetch !== '') {
+    getData(next_fetch);
     contador +=1;
     console.log('else' + contador)
 
