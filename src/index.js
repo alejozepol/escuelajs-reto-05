@@ -2,8 +2,7 @@ const $characters = document.getElementById('characters');
 const $observe = document.getElementById('observe');
 const $end = document.getElementById('end');
 const API = 'https://rickandmortyapi.com/api/character/';
-
-var contador = true
+var inicio = true
 
 const getData = api  => {
   fetch(api)
@@ -47,9 +46,9 @@ function noMasDatos(){
 async function loadData(){
   const next_fetch = localStorage.getItem("next_fetch")
 
-  if (contador) {
+  if (inicio) {
   let datos = await getData(API);
-    contador = false;
+    inicio = false;
 
   } else if(next_fetch !== '') {
     let datos = await getData(next_fetch);
