@@ -1,11 +1,15 @@
 const $app = document.getElementById('app');
 const $observe = document.getElementById('observe');
 const API = 'https://rickandmortyapi.com/api/character/';
-
+var next = ''
+var prev = ''
+var contador = 0
 const getData = api => {
   fetch(api)
     .then(response => response.json())
     .then(response => {
+      next = response.info.next
+      prev =  response.info.prev
       const characters = response.results;
       let output = characters.map(character => {
         return `
@@ -24,7 +28,20 @@ const getData = api => {
 }
 
 const loadData = () => {
-  getData(API);
+  if ( contador < 1) {
+    getData(API);
+    console.log('if ' + contador)
+    contador +=1;
+
+  } else if(next !== '') {
+    getData(next);
+    contador +=1;
+    console.log('else' + contador)
+
+  } else{
+    console.log('no hay mas datos')
+  }
+
 }
 
 const intersectionObserver = new IntersectionObserver(entries => {
