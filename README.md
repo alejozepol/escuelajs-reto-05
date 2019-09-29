@@ -3,7 +3,7 @@ Reto 5 Septiembre 28: Curso de Fundamentos de JavaScript
 
 # 100tifi.co
 
-![100tifico](https://raw.githubusercontent.com/platzi/escuelajs-reto-05/master/screenshot.png?token=ACQQY5SNIXZ7QAVA5XIHPSC5TADSY)
+![100tifico](https://github.com/alejozepol/escuelajs-reto-05/blob/master/public/page.PNG)
 
 Somos un directorio de personajes de la serie animada "Rick and Morty". Estamos por lanzar nuestra implementación y necesitamos resolver los problemas que presenta nuestra aplicación.
 
@@ -27,51 +27,105 @@ npm run start
 
 ### Documentación
 
-
-- Variable llamada $app donde haremos render de nuestra app.
-- Elemento del DOM que sera Observado.
+#### Variables Globales
+- Variable llamada $characters donde haremos render de nuestra app.
+- Variable llamada $observe es el elemento del DOM que sera Observado.
+- Variable llamada $end es el elemento del DOM que sevira como contenedor de mensaje final cuando no existan mas personajes.
+- Variable llamada inicio el cual nos ayuda a identificar si es el primer cargue
 - Constante 'API': Utilizamos la API de Rick and Morty.
 
 ```javascript
-const $app = document.getElementById('app');
+const $characters = document.getElementById('characters');
 const $observe = document.getElementById('observe');
+const $end = document.getElementById('end');
 const API = 'https://rickandmortyapi.com/api/character/';
+var inicio = true
 ```
 
-Función llamada 'getData' que se encarga de hacer Fetch a una API y construye un elemento nuevo en el DOM.
+#### Función getData
+Función llamada 'getData' que se encarga de hacer Fetch a una API.
 
 ```javascript
-const getData = api => {
+const getData = api  => {
   fetch(api)
-    .then(response => response.json())
-    .then(response => {
-      const characters = response.results;
-      let output = characters.map(character => {
-        return `
-      <article class="Card">
-        <img src="${character.image}" />
-        <h2>${character.name}<span>${character.species}</span></h2>
-      </article>
-    `
+  .then(response => response.json())
+  .then(response => {
+    localStorage.setItem('next_fetch',response.info.next) 
+     var characters = response.results
+     var output = characters.map(character => {
+      characters = template(character)
       }).join('');
-      let newItem = document.createElement('section');
-      newItem.classList.add('Items');
-      newItem.innerHTML = output;
-      $app.appendChild(newItem);
-    })
-    .catch(error => console.log(error));
+  })
+  .catch(error => console.log(error));
 }
 ```
 
-Función encargada de hacer Fetch de los personajes.
+#### Función template
+Función que construye el template (tarjetas) donde se mostrara la informacion
 
 ```javascript
-const loadData = () => {
-  getData(API);
+function template(character){
+  let output = `<article class="Card">
+                  <img src="${character.image}"/>
+                  <div class="card__header">
+                    <h2>${character.name}</h2>
+                    <span>${character.species}</span>
+                  </div>
+                </article>`    
+  newItem(output)
 }
 ```
 
-Intersection Observer
+#### Función newItem
+Función que construye el contenedor para las tarjetas e inserta cada uno de los items como tarjeta
+
+```javascript
+function newItem(output){
+  $characters.classList.add('Items')
+  let newItem = document.createElement('div')
+      newItem.innerHTML = output;
+      $characters.appendChild(newItem);
+}
+```
+
+#### Función noMasDatos
+Función encargada insertar un mensaje para informar al usuario que ya no existen mas personajes
+
+```javascript
+function noMasDatos(){
+  let p = document.createElement('p')
+  let template = `No existen más personajes`
+  p.innerHTML = template;
+  $end.classList.add('bg-end')
+  $end.appendChild(p);
+}
+```
+
+#### Función loadData
+Función encargada de hacer Fetch de los personajes y validar si es el primer cargue e identificar cuando es el ultimo.
+
+```javascript
+async function loadData(){
+  const next_fetch = localStorage.getItem("next_fetch")
+
+  if (inicio) {
+  let datos = await getData(API);
+    inicio = false;
+
+  } else if(next_fetch !== '') {
+    let datos = await getData(next_fetch);
+
+  } else{
+    storage.removeItem(keyName);
+    $observe.remove('next_fetch')
+    noMasDatos()
+  }
+}
+```
+
+#### Función Intersection Observer
+Función encargada de Observar cuando el scroll llega al final de la pagina para lanzar la ejecucion del siguiente llamado al API
+
 ```javascript
 
 const intersectionObserver = new IntersectionObserver(entries => {
