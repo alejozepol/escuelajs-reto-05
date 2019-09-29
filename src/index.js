@@ -1,7 +1,7 @@
 const $characters = document.getElementById('characters');
 const $observe = document.getElementById('observe');
 const $end = document.getElementById('end');
-const API = 'https://rickandmortyapi.com/api/character/?page=24';
+const API = 'https://rickandmortyapi.com/api/character/';
 
 var contador = true
 
