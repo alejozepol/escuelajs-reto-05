@@ -1,32 +1,9 @@
-const $app = document.getElementById('app');
 const $characters = document.getElementById('characters');
 const $observe = document.getElementById('observe');
-const API = 'https://rickandmortyapi.com/api/character/';
+const $end = document.getElementById('end');
+const API = 'https://rickandmortyapi.com/api/character/?page=24';
 
-var contador = 0
-
-/* const getData = api => {
-  fetch(api)
-    .then(response => response.json())
-    .then(response => {
-     localStorage.setItem('next_fetch',response.info.next) 
-      const characters = response.results;
-      let output = characters.map(character => {
-        return `
-      <article class="Card">
-        <img src="${character.image}" />
-        <h2>${character.name}<span>${character.species}</span></h2>
-      </article>
-    `
-      }).join('');
-      let newItem = document.createElement('section');
-      newItem.classList.add('Items');
-      newItem.innerHTML = output;
-      $app.appendChild(newItem);
-    })
-    .catch(error => console.log(error));
-}
- */
+var contador = true
 
 const getData = api  => {
   fetch(api)
@@ -51,29 +28,32 @@ function template(character){
 
 function newItem(output){
   $characters.classList.add('Items')
-  let newItem = document.createElement('div');
+  let newItem = document.createElement('div')
       newItem.innerHTML = output;
       $characters.appendChild(newItem);
 }
 
-const loadData = () => {
- const next_fetch = localStorage.getItem("next_fetch")
+function noMasDatos(){
+  let span = document.createElement('span')
+  let template = `No existen más personajes`
+  span.innerHTML = template;
+     $end.appendChild(span);
+}
 
+async function loadData(){
+  const next_fetch = localStorage.getItem("next_fetch")
 
-  if ( contador < 1) {
-    getData(API);
-    console.log('if ' + contador)
-    contador +=1;
+  if (contador) {
+  let datos = await getData(API);
+    contador = false;
 
   } else if(next_fetch !== '') {
-    getData(next_fetch);
-    contador +=1;
-    console.log('else' + contador)
+    let datos = await getData(next_fetch);
 
   } else{
-    console.log('no hay mas datos')
+    $observe.remove()
+    noMasDatos()
   }
-
 }
 
 const intersectionObserver = new IntersectionObserver(entries => {
