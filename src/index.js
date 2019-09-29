@@ -41,7 +41,7 @@ function noMasDatos(){
   let template = `No existen más personajes`
   p.innerHTML = template;
   $end.classList.add('bg-end')
-     $end.appendChild(p);
+  $end.appendChild(p);
 }
 
 async function loadData(){
@@ -55,7 +55,8 @@ async function loadData(){
     let datos = await getData(next_fetch);
 
   } else{
-    $observe.remove()
+    storage.removeItem(keyName);
+    $observe.remove('next_fetch')
     noMasDatos()
   }
 }
