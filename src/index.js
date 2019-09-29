@@ -21,7 +21,10 @@ const getData = api  => {
 function template(character){
   let output = `<article class="Card">
                   <img src="${character.image}"/>
-                  <h2>${character.name}<span>${character.species}</span></h2>
+                  <div class="card__header">
+                    <h2>${character.name}</h2>
+                    <span>${character.species}</span>
+                  </div>
                 </article>`    
   newItem(output)
 }
@@ -34,10 +37,11 @@ function newItem(output){
 }
 
 function noMasDatos(){
-  let span = document.createElement('span')
+  let p = document.createElement('p')
   let template = `No existen más personajes`
-  span.innerHTML = template;
-     $end.appendChild(span);
+  p.innerHTML = template;
+  $end.classList.add('bg-end')
+     $end.appendChild(p);
 }
 
 async function loadData(){
