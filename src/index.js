@@ -1,9 +1,11 @@
 const $app = document.getElementById('app');
+const $characters = document.getElementById('characters');
 const $observe = document.getElementById('observe');
 const API = 'https://rickandmortyapi.com/api/character/';
+
 var contador = 0
 
-const getData = api => {
+/* const getData = api => {
   fetch(api)
     .then(response => response.json())
     .then(response => {
@@ -23,6 +25,35 @@ const getData = api => {
       $app.appendChild(newItem);
     })
     .catch(error => console.log(error));
+}
+ */
+
+const getData = api  => {
+  fetch(api)
+  .then(response => response.json())
+  .then(response => {
+    localStorage.setItem('next_fetch',response.info.next) 
+     var characters = response.results
+     var output = characters.map(character => {
+      characters = template(character)
+      }).join('');
+  })
+  .catch(error => console.log(error));
+}
+
+function template(character){
+  let output = `<article class="Card">
+                  <img src="${character.image}"/>
+                  <h2>${character.name}<span>${character.species}</span></h2>
+                </article>`    
+  newItem(output)
+}
+
+function newItem(output){
+  $characters.classList.add('Items')
+  let newItem = document.createElement('div');
+      newItem.innerHTML = output;
+      $characters.appendChild(newItem);
 }
 
 const loadData = () => {
